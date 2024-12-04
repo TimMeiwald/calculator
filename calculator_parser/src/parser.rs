@@ -197,6 +197,44 @@ pub fn sub_expr<T: Context + 'static>(
     closure_5(parent, source, position)
 }
 #[allow(dead_code)]
+pub fn exponent_expr<T: Context + 'static>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let involved_set = vec![];
+    let closure_1 =
+        _var_name_indirect_left_recursion(&involved_set, Rules::expr_addsub, context, expr_addsub);
+    let closure_2 = _terminal(b'^');
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::expr_parentheses,
+        context,
+        expr_parentheses,
+    );
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    let closure_6 = _subexpression(&closure_5);
+    closure_6(parent, source, position)
+}
+#[allow(dead_code)]
+pub fn parentheses_expr<T: Context + 'static>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let involved_set = vec![];
+    let closure_1 = _terminal(b'(');
+    let closure_2 =
+        _var_name_indirect_left_recursion(&involved_set, Rules::expr_addsub, context, expr_addsub);
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _terminal(b')');
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    closure_5(parent, source, position)
+}
+#[allow(dead_code)]
 pub fn term<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -206,6 +244,48 @@ pub fn term<T: Context>(
     // For now we just use a json number and don't differentiate between integers and floats since it doesn't affect the left recursion test value
     let closure_1 = _var_name(Rules::number, context, number);
     closure_1(parent, source, position)
+}
+#[allow(dead_code)]
+pub fn expr_parentheses<T: Context + 'static>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let involved_set = vec![];
+
+    let closure_1 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::parentheses_expr,
+        context,
+        parentheses_expr,
+    );
+    let closure_2 = _var_name(Rules::term, context, term);
+    let closure_3 = _ordered_choice(&closure_1, &closure_2);
+    closure_3(parent, source, position)
+}
+#[allow(dead_code)]
+pub fn expr_exponentiation<T: Context + 'static>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let involved_set = vec![];
+    let closure_1 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::exponent_expr,
+        context,
+        exponent_expr,
+    );
+    let closure_2 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::expr_parentheses,
+        context,
+        expr_parentheses,
+    );
+    let closure_3 = _ordered_choice(&closure_1, &closure_2);
+    closure_3(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn expr_divmul<T: Context + 'static>(
@@ -221,7 +301,12 @@ pub fn expr_divmul<T: Context + 'static>(
     let closure_2 =
         _var_name_indirect_left_recursion(&involved_set, Rules::mult_expr, context, mult_expr);
     let closure_3 = _ordered_choice(&closure_1, &closure_2);
-    let closure_4 = _var_name(Rules::term, context, term);
+    let closure_4 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::expr_exponentiation,
+        context,
+        expr_exponentiation,
+    );
     let closure_5 = _ordered_choice(&closure_3, &closure_4);
     closure_5(parent, source, position)
 }
