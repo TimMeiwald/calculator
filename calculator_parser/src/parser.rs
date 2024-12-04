@@ -203,9 +203,13 @@ pub fn exponent_expr<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let involved_set = vec![];
-    let closure_1 =
-        _var_name_indirect_left_recursion(&involved_set, Rules::expr_addsub, context, expr_addsub);
+    let involved_set = vec![Rules::expr_addsub, Rules::add_expr, Rules::sub_expr];
+    let closure_1 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::expr_parentheses,
+        context,
+        expr_parentheses,
+    );
     let closure_2 = _terminal(b'^');
     let closure_3 = _sequence(&closure_1, &closure_2);
     let closure_4 = _var_name_indirect_left_recursion(
@@ -215,8 +219,7 @@ pub fn exponent_expr<T: Context + 'static>(
         expr_parentheses,
     );
     let closure_5 = _sequence(&closure_3, &closure_4);
-    let closure_6 = _subexpression(&closure_5);
-    closure_6(parent, source, position)
+    closure_5(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn parentheses_expr<T: Context + 'static>(
@@ -225,7 +228,7 @@ pub fn parentheses_expr<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let involved_set = vec![];
+    let involved_set = vec![Rules::expr_addsub, Rules::add_expr, Rules::sub_expr];
     let closure_1 = _terminal(b'(');
     let closure_2 =
         _var_name_indirect_left_recursion(&involved_set, Rules::expr_addsub, context, expr_addsub);
