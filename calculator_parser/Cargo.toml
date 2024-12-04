@@ -1,0 +1,10 @@
+[package]
+name = "calculator_parser"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.5.22", features = ["derive"] }
+num = "0.4.3"
+num-derive = "0.4.2"
+num-traits = "0.2.19"

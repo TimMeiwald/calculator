@@ -1,0 +1,9 @@
+[package]
+name = "calculator_solver"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0.94"
+calculator_parser = { path = "../calculator_parser" }
+thiserror = "2.0.4"

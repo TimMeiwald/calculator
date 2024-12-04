@@ -1,0 +1,14 @@
+[workspace]
+resolver = "2"
+members = ["calculator_parser", "calculator_solver"]
+
+[profile.dev]
+panic = "unwind"
+debug = true
+
+[profile.release]
+# strip = true  # Automatically strip symbols from the binary.
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+panic = "abort"
