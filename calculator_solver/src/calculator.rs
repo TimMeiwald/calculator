@@ -1,4 +1,4 @@
-use std::num::ParseIntError;
+use std::num::{self, ParseIntError};
 
 use calculator_parser::{parse, BasicPublisher, Key, Node, Rules};
 use thiserror::Error;
@@ -76,11 +76,83 @@ impl<'a> CalculatorContext<'a> {
             Rules::mult_expr => self.expr_mul(child),
             Rules::div_expr => self.expr_div(child),
             Rules::term => self.term(child),
+            Rules::expr_exponentiation => self.expr_exponentiation(child),
 
-            _ => {
-                panic!("Should not happen")
+            e => {
+                panic!("Unexpected rule: {:?}", e);
             }
         };
+    }
+
+    fn expr_exponentiation(&self, node: &Node) -> Result<i64, CalculatorError>{
+        let current_node = node;
+        debug_assert_eq!(current_node.rule, Rules::expr_exponentiation);
+        let children = current_node.get_children();
+        debug_assert_eq!(children.len(), 1);
+        let child = self.publisher.get_node(children[0]);
+        return match child.rule {
+            Rules::exponent_expr => {self.expr_exponent(child)}
+            Rules::expr_parentheses => {self.expr_parenthesis_not_executor(child)}
+            e => {panic!("Unexpected Rule: {:?}", e)}
+        }
+    }
+    fn expr_parenthesis_not_executor(&self, node: &Node) -> Result<i64, CalculatorError>{
+        let current_node = node;
+        debug_assert_eq!(current_node.rule, Rules::expr_parentheses);
+        let children = current_node.get_children();
+        debug_assert_eq!(children.len(), 1);
+        let child = self.publisher.get_node(children[0]);
+        return match child.rule {
+            Rules::term => {self.term(child)}
+            Rules::parentheses_expr => {self.expr_parentheses(child)}
+            e => {panic!("Unexpected Rule: {:?}", e)}
+        }
+    }
+    fn expr_parentheses(&self, node: &Node) -> Result<i64, CalculatorError>{
+        let current_node = node;
+        debug_assert_eq!(current_node.rule, Rules::parentheses_expr);
+        let children = current_node.get_children();
+        debug_assert_eq!(children.len(), 1);
+        let child = self.publisher.get_node(children[0]);
+        return match child.rule {
+            Rules::term => {self.term(child)}
+            Rules::expr_addsub => {self.expr_addsub(child)}
+            e => {panic!("Unexpected Rule: {:?}", e)}
+        }
+        
+
+    }
+
+    fn expr_exponent(&self, node: &Node) -> Result<i64, CalculatorError>{
+        let current_node = node;
+        debug_assert_eq!(current_node.rule, Rules::exponent_expr);
+        let children = current_node.get_children();
+        debug_assert_eq!(children.len(), 2);
+
+        let lhs = self.publisher.get_node(children[0]);
+        let lhs_val: Result<i64, CalculatorError> = match lhs.rule {
+            e => {
+                panic!("Unexpected Rule: {:?}", e)
+            }
+        };
+        let rhs = self.publisher.get_node(children[1]);
+        let rhs_val: Result<i64, CalculatorError> = match rhs.rule {
+            e => {
+                panic!("Unexpected Rule: {:?}", e)
+            }
+        };
+        return match lhs_val {
+            Ok(lhs_val) => match rhs_val {
+                Ok(rhs_val) => {
+                    let result = lhs_val.pow(rhs_val.try_into().expect("For now no float support"));
+                    println!("Exponenting {:?} ^ {:?} = {:?}", lhs_val, rhs_val, result);
+                    Ok(result)
+                }
+                Err(err) => Err(err),
+            },
+            Err(err) => Err(err),
+        };
+
     }
 
     fn expr_add(&self, node: &Node) -> Result<i64, CalculatorError> {

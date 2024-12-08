@@ -89,4 +89,10 @@ mod tests {
         let result = calculate(src);
         assert_eq!(result.unwrap(), -15);
     }
+    #[test]
+    fn test17() {
+        let src = "(10/2+50)-3*9+8/3+(20/5-10)";
+        let result = calculate(src);
+        assert_eq!(result.unwrap(), -15);
+    }
 }
