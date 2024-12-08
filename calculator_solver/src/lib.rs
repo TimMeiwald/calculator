@@ -140,4 +140,10 @@ mod tests {
         let result = calculate(src);
         assert_eq!(result.unwrap(), 100);
     }
+    #[test]
+    fn test25() {
+        let src = "5-((20-3)*5)";
+        let result = calculate(src);
+        assert_eq!(result.unwrap(), -80);
+    }
 }
