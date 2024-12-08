@@ -106,6 +106,36 @@ mod tests {
     }
     #[test]
     fn test19() {
+        let src = "(20-3)-5";
+        let result = calculate(src);
+        assert_eq!(result.unwrap(), 12);
+    }
+    #[test]
+    fn test20() {
+        let src = "5-(20-3)";
+        let result = calculate(src);
+        assert_eq!(result.unwrap(), -12);
+    }
+    #[test]
+    fn test21() {
+        let src = "5-(20)";
+        let result = calculate(src);
+        assert_eq!(result.unwrap(), -15);
+    }
+    #[test]
+    fn test22() {
+        let src = "(20-3)*5";
+        let result = calculate(src);
+        assert_eq!(result.unwrap(), 85);
+    }
+    #[test]
+    fn test23() {
+        let src = "5*(20-3)";
+        let result = calculate(src);
+        assert_eq!(result.unwrap(), 85);
+    }
+    #[test]
+    fn test24() {
         let src = "5*(20)";
         let result = calculate(src);
         assert_eq!(result.unwrap(), 100);
