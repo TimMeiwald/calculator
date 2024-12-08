@@ -131,6 +131,8 @@ impl<'a> CalculatorContext<'a> {
 
         let lhs = self.publisher.get_node(children[0]);
         let lhs_val: Result<i64, CalculatorError> = match lhs.rule {
+            Rules::expr_parentheses => {return self.expr_parentheses(lhs)}
+
             e => {
                 panic!("Unexpected Rule: {:?}", e)
             }

@@ -89,10 +89,25 @@ mod tests {
         let result = calculate(src);
         assert_eq!(result.unwrap(), -15);
     }
+
     #[test]
     fn test17() {
+        let src = "5^2";
+        let result = calculate(src);
+        assert_eq!(result.unwrap(), 25);
+    }
+
+    #[test]
+    fn test18() {
         let src = "(10/2+50)-3*9+8/3+(20/5-10)";
         let result = calculate(src);
         assert_eq!(result.unwrap(), -15);
+        todo!("Check result")
+    }
+    #[test]
+    fn test19() {
+        let src = "5*(20)";
+        let result = calculate(src);
+        assert_eq!(result.unwrap(), 100);
     }
 }
