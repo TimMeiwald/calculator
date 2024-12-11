@@ -624,4 +624,26 @@ mod tests {
             .print(Key(0), Some(true));
         assert_eq!((result.0, result.1), (true, src_len));
     }
+    #[test]
+    fn test_calc_basic167524658() {
+        let string = "5*(20*5)".to_string();
+        let src_len = string.len() as u32;
+        let source = Source::new(&string);
+        let position: u32 = 0;
+        let result: (bool, u32);
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        {
+            let executor = _var_name(Rules::Grammar, &context, grammar);
+            result = executor(Key(0), &source, position);
+        }
+        println!("Result: {:?}", result);
+        //context.borrow().print_cache();
+        //context.borrow().print_publisher();
+        context
+            .into_inner()
+            .get_publisher()
+            .clear_false()
+            .print(Key(0), Some(true));
+        assert_eq!((result.0, result.1), (true, src_len));
+    }
 }
