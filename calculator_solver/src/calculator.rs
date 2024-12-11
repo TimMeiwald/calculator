@@ -59,8 +59,8 @@ impl<'a> CalculatorContext<'a> {
             Rules::add_expr => self.expr_add(child),
             Rules::sub_expr => self.expr_sub(child),
             Rules::expr_divmul => self.expr_divmul(child),
-            _ => {
-                panic!("Should not happen")
+            e => {
+                panic!("Unexpected Rule: {:?}", e)
             }
         };
     }
@@ -84,46 +84,50 @@ impl<'a> CalculatorContext<'a> {
         };
     }
 
-    fn expr_exponentiation(&self, node: &Node) -> Result<i64, CalculatorError>{
+    fn expr_exponentiation(&self, node: &Node) -> Result<i64, CalculatorError> {
         let current_node = node;
         debug_assert_eq!(current_node.rule, Rules::expr_exponentiation);
         let children = current_node.get_children();
         debug_assert_eq!(children.len(), 1);
         let child = self.publisher.get_node(children[0]);
         return match child.rule {
-            Rules::exponent_expr => {self.expr_exponent(child)}
-            Rules::expr_parentheses => {self.expr_parenthesis_not_executor(child)}
-            e => {panic!("Unexpected Rule: {:?}", e)}
-        }
+            Rules::exponent_expr => self.expr_exponent(child),
+            Rules::expr_parentheses => self.expr_parenthesis_not_executor(child),
+            e => {
+                panic!("Unexpected Rule: {:?}", e)
+            }
+        };
     }
-    fn expr_parenthesis_not_executor(&self, node: &Node) -> Result<i64, CalculatorError>{
+    fn expr_parenthesis_not_executor(&self, node: &Node) -> Result<i64, CalculatorError> {
         let current_node = node;
         debug_assert_eq!(current_node.rule, Rules::expr_parentheses);
         let children = current_node.get_children();
         debug_assert_eq!(children.len(), 1);
         let child = self.publisher.get_node(children[0]);
         return match child.rule {
-            Rules::term => {self.term(child)}
-            Rules::parentheses_expr => {self.expr_parentheses(child)}
-            e => {panic!("Unexpected Rule: {:?}", e)}
-        }
+            Rules::term => self.term(child),
+            Rules::parentheses_expr => self.expr_parentheses(child),
+            e => {
+                panic!("Unexpected Rule: {:?}", e)
+            }
+        };
     }
-    fn expr_parentheses(&self, node: &Node) -> Result<i64, CalculatorError>{
+    fn expr_parentheses(&self, node: &Node) -> Result<i64, CalculatorError> {
         let current_node = node;
         debug_assert_eq!(current_node.rule, Rules::parentheses_expr);
         let children = current_node.get_children();
         debug_assert_eq!(children.len(), 1);
         let child = self.publisher.get_node(children[0]);
         return match child.rule {
-            Rules::term => {self.term(child)}
-            Rules::expr_addsub => {self.expr_addsub(child)}
-            e => {panic!("Unexpected Rule: {:?}", e)}
-        }
-        
-
+            Rules::term => self.term(child),
+            Rules::expr_addsub => self.expr_addsub(child),
+            e => {
+                panic!("Unexpected Rule: {:?}", e)
+            }
+        };
     }
 
-    fn expr_exponent(&self, node: &Node) -> Result<i64, CalculatorError>{
+    fn expr_exponent(&self, node: &Node) -> Result<i64, CalculatorError> {
         let current_node = node;
         debug_assert_eq!(current_node.rule, Rules::exponent_expr);
         let children = current_node.get_children();
@@ -131,7 +135,7 @@ impl<'a> CalculatorContext<'a> {
 
         let lhs = self.publisher.get_node(children[0]);
         let lhs_val: Result<i64, CalculatorError> = match lhs.rule {
-            Rules::expr_parentheses => {self.expr_parenthesis_not_executor(lhs)}
+            Rules::expr_parentheses => self.expr_parenthesis_not_executor(lhs),
 
             e => {
                 panic!("Unexpected Rule: {:?}", e)
@@ -139,10 +143,9 @@ impl<'a> CalculatorContext<'a> {
         };
         let rhs = self.publisher.get_node(children[1]);
         let rhs_val: Result<i64, CalculatorError> = match rhs.rule {
-            Rules::expr_parentheses => {self.expr_parenthesis_not_executor(rhs)},
+            Rules::expr_parentheses => self.expr_parenthesis_not_executor(rhs),
 
             e => {
-
                 panic!("Unexpected Rule: {:?}", e)
             }
         };
@@ -157,7 +160,6 @@ impl<'a> CalculatorContext<'a> {
             },
             Err(err) => Err(err),
         };
-
     }
 
     fn expr_add(&self, node: &Node) -> Result<i64, CalculatorError> {
@@ -171,15 +173,15 @@ impl<'a> CalculatorContext<'a> {
         let lhs = self.publisher.get_node(children[0]);
         let lhs_val = match lhs.rule {
             Rules::expr_addsub => self.expr_addsub(lhs),
-            _ => {
-                panic!("Should not happen")
+            e => {
+                panic!("Unexpected Rule: {:?}", e)
             }
         };
         let rhs = self.publisher.get_node(children[1]);
         let rhs_val = match rhs.rule {
             Rules::expr_divmul => self.expr_divmul(rhs),
-            _ => {
-                panic!("Should not happen")
+            e => {
+                panic!("Unexpected Rule: {:?}", e)
             }
         };
         return match lhs_val {
@@ -206,15 +208,15 @@ impl<'a> CalculatorContext<'a> {
         let lhs = self.publisher.get_node(children[0]);
         let lhs_val = match lhs.rule {
             Rules::expr_addsub => self.expr_addsub(lhs),
-            _ => {
-                panic!("Should not happen")
+            e => {
+                panic!("Unexpected Rule: {:?}", e)
             }
         };
         let rhs = self.publisher.get_node(children[1]);
         let rhs_val = match rhs.rule {
             Rules::expr_divmul => self.expr_divmul(rhs),
-            _ => {
-                panic!("Should not happen")
+            e => {
+                panic!("Unexpected Rule: {:?}", e)
             }
         };
         return match lhs_val {
@@ -241,15 +243,15 @@ impl<'a> CalculatorContext<'a> {
         let lhs = self.publisher.get_node(children[0]);
         let lhs_val = match lhs.rule {
             Rules::expr_divmul => self.expr_divmul(lhs),
-            _ => {
-                panic!("Should not happen")
+            e => {
+                panic!("Unexpected Rule: {:?}", e)
             }
         };
         let rhs = self.publisher.get_node(children[1]);
         let rhs_val = match rhs.rule {
-            Rules::term => self.term(rhs),
-            _ => {
-                panic!("Should not happen")
+            Rules::expr_exponentiation => self.expr_exponentiation(rhs),
+            e => {
+                panic!("Unexpected Rule: {:?}", e)
             }
         };
         return match rhs_val {
@@ -282,15 +284,15 @@ impl<'a> CalculatorContext<'a> {
         let lhs = self.publisher.get_node(children[0]);
         let lhs_val = match lhs.rule {
             Rules::expr_divmul => self.expr_divmul(lhs),
-            _ => {
-                panic!("Should not happen")
+            e => {
+                panic!("Unexpected Rule: {:?}", e)
             }
         };
         let rhs = self.publisher.get_node(children[1]);
         let rhs_val = match rhs.rule {
-            Rules::term => self.term(rhs),
-            _ => {
-                panic!("Should not happen")
+            Rules::expr_exponentiation => self.expr_exponentiation(rhs),
+            e => {
+                panic!("Unexpected Rule: {:?}", e)
             }
         };
         return match lhs_val {
