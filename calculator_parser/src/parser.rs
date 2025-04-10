@@ -121,7 +121,6 @@ pub fn div_expr<T: Context + 'static>(
 ) -> (bool, u32) {
     let involved_set = vec![
         Rules::expr_divmul,
-        Rules::div_expr,
         Rules::mult_expr,
         Rules::expr_exponentiation,
     ];
@@ -149,7 +148,6 @@ pub fn mult_expr<T: Context + 'static>(
     let involved_set = vec![
         Rules::expr_divmul,
         Rules::div_expr,
-        Rules::mult_expr,
         Rules::expr_exponentiation,
     ];
 
@@ -175,7 +173,6 @@ pub fn add_expr<T: Context + 'static>(
 ) -> (bool, u32) {
     let involved_set = vec![
         Rules::expr_addsub,
-        Rules::add_expr,
         Rules::sub_expr,
         Rules::expr_divmul,
         Rules::div_expr,
@@ -201,7 +198,6 @@ pub fn sub_expr<T: Context + 'static>(
     let involved_set = vec![
         Rules::expr_addsub,
         Rules::add_expr,
-        Rules::sub_expr,
         Rules::expr_divmul,
         Rules::div_expr,
         Rules::mult_expr,
@@ -317,7 +313,7 @@ pub fn expr_divmul<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let involved_set = vec![Rules::expr_divmul, Rules::div_expr, Rules::mult_expr];
+    let involved_set = vec![Rules::div_expr, Rules::mult_expr];
 
     let closure_1 =
         _var_name_indirect_left_recursion(&involved_set, Rules::div_expr, context, div_expr);
@@ -341,7 +337,6 @@ pub fn expr_addsub<T: Context + 'static>(
     position: u32,
 ) -> (bool, u32) {
     let involved_set = vec![
-        Rules::expr_addsub,
         Rules::add_expr,
         Rules::sub_expr,
         Rules::expr_divmul,
