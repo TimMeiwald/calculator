@@ -119,11 +119,7 @@ pub fn div_expr<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let involved_set = vec![
-        Rules::expr_divmul,
-        Rules::mult_expr,
-        Rules::expr_exponentiation,
-    ];
+    let involved_set = vec![];
 
     let closure_1 =
         _var_name_indirect_left_recursion(&involved_set, Rules::expr_divmul, context, expr_divmul);
@@ -145,16 +141,12 @@ pub fn mult_expr<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let involved_set = vec![
-        Rules::expr_divmul,
-        Rules::div_expr,
-        Rules::expr_exponentiation,
-    ];
-
+    let involved_set = vec![];
     let closure_1 =
         _var_name_indirect_left_recursion(&involved_set, Rules::expr_divmul, context, expr_divmul);
     let closure_2 = _terminal(b'*');
     let closure_3 = _sequence(&closure_1, &closure_2);
+
     let closure_4 = _var_name_indirect_left_recursion(
         &involved_set,
         Rules::expr_exponentiation,
@@ -171,18 +163,13 @@ pub fn add_expr<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let involved_set = vec![
-        Rules::expr_addsub,
-        Rules::sub_expr,
-        Rules::expr_divmul,
-        Rules::div_expr,
-        Rules::mult_expr,
-    ];
+    let involved_set = vec![];
 
     let closure_1 =
         _var_name_indirect_left_recursion(&involved_set, Rules::expr_addsub, context, expr_addsub);
     let closure_2 = _terminal(b'+');
     let closure_3 = _sequence(&closure_1, &closure_2);
+    let involved_set = vec![Rules::expr_divmul, Rules::div_expr, Rules::mult_expr];
     let closure_4 =
         _var_name_indirect_left_recursion(&involved_set, Rules::expr_divmul, context, expr_divmul);
     let closure_5 = _sequence(&closure_3, &closure_4);
@@ -195,18 +182,12 @@ pub fn sub_expr<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let involved_set = vec![
-        Rules::expr_addsub,
-        Rules::add_expr,
-        Rules::expr_divmul,
-        Rules::div_expr,
-        Rules::mult_expr,
-    ];
-
+    let involved_set = vec![];
     let closure_1 =
         _var_name_indirect_left_recursion(&involved_set, Rules::expr_addsub, context, expr_addsub);
     let closure_2 = _terminal(b'-');
     let closure_3 = _sequence(&closure_1, &closure_2);
+    let involved_set = vec![Rules::expr_divmul, Rules::div_expr, Rules::mult_expr];
     let closure_4 =
         _var_name_indirect_left_recursion(&involved_set, Rules::expr_divmul, context, expr_divmul);
     let closure_5 = _sequence(&closure_3, &closure_4);
@@ -219,7 +200,7 @@ pub fn exponent_expr<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let involved_set = vec![Rules::expr_addsub, Rules::add_expr, Rules::sub_expr];
+    let involved_set = vec![];
     let closure_1 = _var_name_indirect_left_recursion(
         &involved_set,
         Rules::expr_parentheses,
@@ -228,6 +209,7 @@ pub fn exponent_expr<T: Context + 'static>(
     );
     let closure_2 = _terminal(b'^');
     let closure_3 = _sequence(&closure_1, &closure_2);
+    let involved_set = vec![];
     let closure_4 = _var_name_indirect_left_recursion(
         &involved_set,
         Rules::expr_parentheses,
@@ -343,11 +325,7 @@ pub fn expr_addsub<T: Context + 'static>(
     let closure_2 =
         _var_name_indirect_left_recursion(&involved_set, Rules::sub_expr, context, sub_expr);
     let closure_3 = _ordered_choice(&closure_1, &closure_2);
-    let involved_set = vec![
-        Rules::expr_divmul,
-        Rules::div_expr,
-        Rules::mult_expr,
-    ];
+    let involved_set = vec![Rules::expr_divmul, Rules::div_expr, Rules::mult_expr];
     let closure_4 =
         _var_name_indirect_left_recursion(&involved_set, Rules::expr_divmul, context, expr_divmul);
     let closure_5 = _ordered_choice(&closure_3, &closure_4);

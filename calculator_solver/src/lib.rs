@@ -157,4 +157,16 @@ mod tests {
         let result = calculate(src);
         assert_eq!(result.unwrap(), 22);
     }
+    #[test]
+    fn test28() {
+        let src = "(20-(10-(15-10)))";
+        let result = calculate(src);
+        assert_eq!(result.unwrap(), 15);
+    }
+    #[test]
+    fn test29() {
+        let src = "20-10-15-10";
+        let result = calculate(src);
+        assert_eq!(result.unwrap(), -15);
+    }
 }
