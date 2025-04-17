@@ -313,8 +313,7 @@ pub fn expr_divmul<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let involved_set = vec![Rules::div_expr, Rules::mult_expr];
-
+    let involved_set = vec![];
     let closure_1 =
         _var_name_indirect_left_recursion(&involved_set, Rules::div_expr, context, div_expr);
     let closure_2 =
@@ -336,19 +335,19 @@ pub fn expr_addsub<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
+    let involved_set = vec![];
+
+    let closure_1 =
+        _var_name_indirect_left_recursion(&involved_set, Rules::add_expr, context, add_expr);
+    let involved_set = vec![];
+    let closure_2 =
+        _var_name_indirect_left_recursion(&involved_set, Rules::sub_expr, context, sub_expr);
+    let closure_3 = _ordered_choice(&closure_1, &closure_2);
     let involved_set = vec![
-        Rules::add_expr,
-        Rules::sub_expr,
         Rules::expr_divmul,
         Rules::div_expr,
         Rules::mult_expr,
     ];
-
-    let closure_1 =
-        _var_name_indirect_left_recursion(&involved_set, Rules::add_expr, context, add_expr);
-    let closure_2 =
-        _var_name_indirect_left_recursion(&involved_set, Rules::sub_expr, context, sub_expr);
-    let closure_3 = _ordered_choice(&closure_1, &closure_2);
     let closure_4 =
         _var_name_indirect_left_recursion(&involved_set, Rules::expr_divmul, context, expr_divmul);
     let closure_5 = _ordered_choice(&closure_3, &closure_4);
