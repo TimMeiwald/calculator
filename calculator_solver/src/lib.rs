@@ -181,4 +181,10 @@ mod tests {
         let result = calculate(src);
         assert_eq!(result.unwrap(), 50);
     }
+    #[test]
+    fn test32() {
+        let src = "(250/(5/(5/5)*(3-6)))";
+        let result = calculate(src);
+        assert_eq!(result.unwrap(), -16);
+    }
 }
