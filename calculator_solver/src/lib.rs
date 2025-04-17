@@ -169,4 +169,16 @@ mod tests {
         let result = calculate(src);
         assert_eq!(result.unwrap(), -15);
     }
+    #[test]
+    fn test30() {
+        let src = "250/5/5/5";
+        let result = calculate(src);
+        assert_eq!(result.unwrap(), 2);
+    }
+    #[test]
+    fn test31() {
+        let src = "(250/(5/(5/5)))";
+        let result = calculate(src);
+        assert_eq!(result.unwrap(), 50);
+    }
 }
