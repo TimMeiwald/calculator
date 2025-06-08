@@ -178,8 +178,9 @@ pub fn sub_expr<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
+    let involved_set = vec![Rules::expr_addsub, Rules::add_expr, Rules::sub_expr];
     let closure_1 =
-        _var_name(Rules::expr_addsub, context, expr_addsub);
+    _var_name_indirect_left_recursion(&involved_set, Rules::expr_addsub, context, expr_addsub);
     let closure_2 = _terminal(b'-');
     let closure_3 = _sequence(&closure_1, &closure_2);
     let involved_set = vec![Rules::expr_divmul, Rules::div_expr, Rules::mult_expr];
